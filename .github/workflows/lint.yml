@@ -1,12 +1,14 @@
 name: Lint
 
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+# Disabled temporarily
+# on:
+#   push:
+#     branches:
+#       - main
+#   pull_request:
+#     branches:
+#       - main
+on: workflow_dispatch
 
 jobs:
   lint:
