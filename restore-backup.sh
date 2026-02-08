@@ -97,11 +97,11 @@ SITE_CONFIG="sites/${SITE_NAME}/site_config.json"
 if [ -f "$SITE_CONFIG" ]; then
     # bench restore may overwrite site_config.json — ensure Docker settings are intact
     echo "Verifying site_config.json has required Docker settings..."
-    bench set-config -g db_host mariadb 2>/dev/null || true
-    bench set-config -gp db_port 3306 2>/dev/null || true
-    bench set-config -g redis_cache "redis://redis:6379" 2>/dev/null || true
-    bench set-config -g redis_queue "redis://redis:6379" 2>/dev/null || true
-    bench set-config -g redis_socketio "redis://redis:6379" 2>/dev/null || true
+    bench set-config -g db_host "${DB_HOST:-db}" 2>/dev/null || true
+    bench set-config -gp db_port "${DB_PORT:-3306}" 2>/dev/null || true
+    bench set-config -g redis_cache "redis://${REDIS_CACHE:-redis-cache:6379}" 2>/dev/null || true
+    bench set-config -g redis_queue "redis://${REDIS_QUEUE:-redis-queue:6379}" 2>/dev/null || true
+    bench set-config -g redis_socketio "redis://${REDIS_QUEUE:-redis-queue:6379}" 2>/dev/null || true
 fi
 
 # Step 5: Restore files if provided

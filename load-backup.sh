@@ -108,16 +108,19 @@ fi
 echo ""
 echo "Copying backups to Docker volume..."
 
-# Get the running frappe container name
-CONTAINER_NAME=$(docker compose ps -q frappe)
+# Get the running backend container name
+CONTAINER_NAME=$(docker compose ps -q backend)
 
 if [ -z "$CONTAINER_NAME" ]; then
-    echo "Error: frappe container is not running"
+    echo "Error: backend container is not running"
     echo "Please start the containers first: docker compose up -d"
     exit 1
 fi
 
-# Copy files into the container's backup volume
+# Copy restore script and backup files into the container
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+docker cp "$SCRIPT_DIR/restore-backup.sh" "${CONTAINER_NAME}:/home/frappe/restore-backup.sh"
+
 docker cp "$TEMP_DIR/database.sql.gz" "${CONTAINER_NAME}:/home/frappe/backups/"
 
 if [ -f "$TEMP_DIR/private-files.tar" ]; then
@@ -136,5 +139,5 @@ echo ""
 echo "Files are now in the container at /home/frappe/backups/"
 echo ""
 echo "To restore the backup, run:"
-echo "  docker compose exec frappe bash /workspace/restore.sh"
+echo "  docker compose exec backend bash /home/frappe/restore-backup.sh"
 echo ""
