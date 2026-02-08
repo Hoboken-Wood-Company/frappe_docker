@@ -1,0 +1,20 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:  # allows manual trigger
+
+jobs:
+  deploy:
+    runs-on: howoco
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Sync to production directory
+        run: |
+          mkdir -p ~/prod/erpnext
+          rsync -av --exclude '.env' ./ ~/prod/erpnext/
+          echo "Code synced to ~/prod/erpnext/"
