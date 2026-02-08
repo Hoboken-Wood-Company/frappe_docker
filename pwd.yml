@@ -75,7 +75,7 @@ services:
           fi
         done;
         echo "sites/common_site_config.json found";
-        bench new-site --mariadb-user-host-login-scope='%' --admin-password=admin --db-root-username=root --db-root-password=admin --install-app erpnext --set-default frontend;
+        bench new-site --mariadb-user-host-login-scope='%' --admin-password=admin --db-root-username=root --db-root-password=admin --install-app erpnext --set-default erpnext.hobowo.co;
 
   db:
     image: mariadb:10.6
@@ -102,6 +102,7 @@ services:
   frontend:
     image: frappe/erpnext:v15.96.1
     networks:
+      - edge
       - frappe_network
     depends_on:
       - websocket
@@ -112,11 +113,11 @@ services:
       - nginx-entrypoint.sh
     environment:
       BACKEND: backend:8000
-      FRAPPE_SITE_NAME_HEADER: frontend
+      FRAPPE_SITE_NAME_HEADER: erpnext.hobowo.co
       SOCKETIO: websocket:9000
-      UPSTREAM_REAL_IP_ADDRESS: 127.0.0.1
+      UPSTREAM_REAL_IP_ADDRESS: 172.0.0.0/8
       UPSTREAM_REAL_IP_HEADER: X-Forwarded-For
-      UPSTREAM_REAL_IP_RECURSIVE: "off"
+      UPSTREAM_REAL_IP_RECURSIVE: "on"
       PROXY_READ_TIMEOUT: 120
       CLIENT_MAX_BODY_SIZE: 50m
     volumes:
@@ -219,5 +220,7 @@ volumes:
   logs:
 
 networks:
+  edge:
+    external: true
   frappe_network:
     driver: bridge
